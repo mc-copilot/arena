@@ -1,0 +1,122 @@
+[
+    {
+        "task_id": 7,
+        "group": "summarization",
+        "question": "Summarize the American Civil War according to the timeline"
+    },
+    {
+        "task_id": 8,
+        "group": "summarization",
+        "question": "Summarize the 911 event according to the timeline"
+    },
+    {
+        "task_id": 9,
+        "group": "summarization",
+        "question": "Summarize the history of the China according to the timeline"
+    },
+    {
+        "task_id": 1,
+        "group": "survey",
+        "question": "Write a short survey paper (less than 5 paragraphs) to summarize the Retrieval-augmented Generation methods for Large Language Models."
+    },
+    {
+        "task_id": 2,
+        "group": "survey",
+        "question": "Write a short survey paper (less than 5 paragraphs) to summarize the reasoning methods in Large Language Models."
+    },
+    {
+        "task_id": 3,
+        "group": "survey",
+        "question": "Write a short survey paper (less than 5 paragraphs) to summarize code generation methods with Large Language Models."
+    },
+    {
+        "task_id": 4,
+        "group": "report",
+        "question": "Describe of Jin-Yong's life (less than 3 paragraphs)."
+    },
+    {
+        "task_id": 5,
+        "group": "report",
+        "question": "Describe of Franklin Delano Roosevelt's life (less than 3 paragraphs)."
+    },
+    {
+        "task_id": 6,
+        "group": "report",
+        "question": "Describe of the history of the United States (less than 3 paragraphs)."
+    },
+    {
+        "task_id": 10,
+        "group": "summarization",
+        "question": "Summarize the Industrial Revolution according to the timeline."
+    },
+    {
+        "task_id": 11,
+        "group": "summarization",
+        "question": "Summarize the Space Race between the United States and the Soviet Union according to the timeline."
+    },
+    {
+        "task_id": 12,
+        "group": "summarization",
+        "question": "Summarize the development and impact of the Internet from its inception to the present day according to the timeline"
+    },
+    {
+        "task_id": 13,
+        "group": "survey",
+        "question": "Write a short survey paper (less than 5 paragraphs) summarizing the evolution of artificial intelligence from symbolic AI to neural networks."
+    },
+    {
+        "task_id": 14,
+        "group": "survey",
+        "question": "Write a short survey paper (less than 5 paragraphs) to summarize the advancements in quantum computing."
+    },
+    {
+        "task_id": 15,
+        "group": "survey",
+        "question": "Write a short survey paper (less than 5 paragraphs) to summarize the impact of blockchain technology on financial services."
+    },
+    {
+        "task_id": 16,
+        "group": "report",
+        "question": "Describe the life and achievements of Marie Curie (less than 3 paragraphs)."
+    },
+    {
+        "task_id": 17,
+        "group": "report",
+        "question": "Describe the life and contributions of Nikola Tesla to the field of electrical engineering (less than 3 paragraphs)."
+    },
+    {
+        "task_id": 18,
+        "group": "report",
+        "question": "Describe the history and cultural significance of the Silk Road (less than 3 paragraphs)."
+    },
+    {
+        "task_id": 19,
+        "group": "analysis",
+        "question": "Analyze the impact of social media on interpersonal communication (less than 4 paragraphs)."
+    },
+    {
+        "task_id": 20,
+        "group": "analysis",
+        "question": "Discuss the evolution of music genres in the 20th century (less than 4 paragraphs)."
+    },
+    {
+        "task_id": 21,
+        "group": "analysis",
+        "question": "Evaluate the role of technological innovation in shaping modern education (less than 4 paragraphs)."
+    },
+    {
+        "task_id": 22,
+        "group": "developments",
+        "question": "Summarize the major milestones in the development of renewable energy sources (less than 5 paragraphs)."
+    },
+    {
+        "task_id": 23,
+        "group": "developments",
+        "question": "Describe the evolution of computer programming languages from the 1950s to today (less than 4 paragraphs)."
+    },
+    {
+        "task_id": 24,
+        "group": "developments",
+        "question": "Discuss the advancements in medical technology and their impact on healthcare (less than 5 paragraphs)."
+    }
+]

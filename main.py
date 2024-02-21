@@ -6,21 +6,44 @@ import uuid
 import datetime
 
 rating_models = [
+    'DIRECT',
+    'COT',
+    'RAG-1',
+    'RAG-5',
+    'CoRAG',
     'gpt-3.5-turbo (0-shot)',
     'gpt-4 (0-shot)',
     'gpt-3.5-turbo (1-shot)',
 ]
 
 BATTLE_TARGETS = {
+    'DIRECT': ['COT', 'RAG-1', 'RAG-5', 'CoRAG'],
+    'COT': ['RAG-1', 'RAG-5', 'CoRAG', 'DIRECT'],
+    'RAG-1': ['RAG-5', 'CoRAG', 'DIRECT', 'COT'],
+    'RAG-5': ['CoRAG', 'DIRECT', 'COT', 'RAG-1'],
+    'CoRAG': ['DIRECT', 'COT', 'RAG-1', 'RAG-5'],
     'gpt-3.5-turbo (0-shot)': ['CoRAG-3.5 (0-shot)', 'CoRAG-3.5-causal (0-shot)'],
     'gpt-4 (0-shot)': ['CoRAG-4 (0-shot)'],
     'gpt-3.5-turbo (1-shot)': ['CoRAG-3.5-causal (1-shot)'],
 }
 
-DATA_FOLDER = 'data/minecraft/'
-OUT_FOLDER = 'out/minecraft/'
+# DATA_FOLDER = 'data/minecraft/'
+# OUT_FOLDER = 'out/minecraft/'
 
-def get_data(data_folder=DATA_FOLDER):
+group_folder = {
+    "Minecraft Planning": {
+        "data_folder": 'data/minecraft/',
+        "out_folder": 'out/minecraft/'
+    },
+    "Creative Writing": {
+        "data_folder": 'data/creative/',
+        "out_folder": 'out/creative/'
+    }
+}
+# DATA_FOLDER = 'data/creative/'
+# OUT_FOLDER = 'out/creative/'
+
+def get_data(data_folder):
     while True:
         file = random.choice(os.listdir(data_folder))
         if not file.endswith('.json'):
@@ -61,7 +84,7 @@ def get_data(data_folder=DATA_FOLDER):
     }
     return data
 
-def save_data(data, out_folder=OUT_FOLDER):
+def save_data(data, out_folder):
     file_name = data['timestamp'] + '.json'
     out_file = os.path.join(out_folder, file_name)
     with open(out_file, 'w') as f:
@@ -80,24 +103,30 @@ notice_markdown = """
 - If you want to skip, click "Skip".
 
 ## 📊 Principle
-你可以从以下几个方面考察模型的表现：
-1. **相关性**：回答是否与问题相关？
-2. **准确性**：回答是否准确？比如crafting table是由4个木板合成的，而不是4个木头；diamond axe需要使用3个diamond和2个stick合成，而不是3个stick和2个diamond。
-2. **完整性**：回答是否完整？比如从木头合成wooden pickaxe需要先合成木板再合成stick，最后才能合成pickaxe。中间步骤不可以被忽略
-3. **可读性**：回答是否通顺？
-5. **可执行性**：考虑到游戏的特性，回答是否可执行？
+You can evaluate the performance of the model from the following aspects:
+1. **Relevance**: Does it answer the question accurately?
+2. **Accuracy**: Is it accurate? For example, a crafting table is made by combining 4 wooden planks, not 4 logs; a diamond axe requires 3 diamonds and 2 sticks to craft, not 3 sticks and 2 diamonds.
+3. **Completeness**: Is it complete? For example, crafting a wooden pickaxe from logs requires first crafting wooden planks and then crafting sticks before finally being able to craft the pickaxe. The intermediate steps cannot be ignored.
+4. **Readability**: Is it coherent?
+5. **Executability**: Considering the characteristics of the game, is it executable?
 
 ## 👇 Vote now!
 
 """
 
 def newround_response(group):
-    data = get_data()
+    if group == "Minecraft Planning":
+        data = get_data(group_folder[group]['data_folder'])
+    elif group == "Creative Writing":
+        data = get_data(group_folder[group]['data_folder'])
+    else:
+        raise ValueError("Invalid task group")
+    # data = get_data()
     gr.update(elem_id='model_a_from', visible=False)
     gr.update(elem_id='model_b_from', visible=False)
     return data['instruction'], data['model_a'], data['model_a_response'], "[MASK]", data['model_b'], data['model_b_response'], "[MASK]" # visible
 
-def leftvote_response(instruction, model_a_name, model_a_response, model_b_name, model_b_response):
+def leftvote_response(group, instruction, model_a_name, model_a_response, model_b_name, model_b_response):
     data = {
         'uuid': str(uuid.uuid4()),
         # 'abbr': file.replace('.json', ''),
@@ -110,13 +139,13 @@ def leftvote_response(instruction, model_a_name, model_a_response, model_b_name,
         'model_a_response': model_a_response,
         'model_b_response': model_b_response,
     }
-    save_data(data)
+    save_data(data, out_folder=group_folder[group]['out_folder'])
     # gr.update(elem_id="model_a_from", visible=True)
     # gr.update(elem_id="model_b_from", visible=True)
     return model_a_name, model_b_name 
     
 
-def rightvote_response(instruction, model_a_name, model_a_response, model_b_name, model_b_response):
+def rightvote_response(group, instruction, model_a_name, model_a_response, model_b_name, model_b_response):
     data = {
         'uuid': str(uuid.uuid4()),
         # 'abbr': file.replace('.json', ''),
@@ -129,12 +158,12 @@ def rightvote_response(instruction, model_a_name, model_a_response, model_b_name
         'model_a_response': model_a_response,
         'model_b_response': model_b_response,
     }
-    save_data(data)
+    save_data(data, out_folder=group_folder[group]['out_folder'])
     # gr.update(elem_id="model_a_from", visible=True)
     # gr.update(elem_id="model_b_from", visible=True)
     return model_a_name, model_b_name 
 
-def tie_response(instruction, model_a_name, model_a_response, model_b_name, model_b_response):
+def tie_response(group, instruction, model_a_name, model_a_response, model_b_name, model_b_response):
     data = {
         'uuid': str(uuid.uuid4()),
         # 'abbr': file.replace('.json', ''),
@@ -147,12 +176,12 @@ def tie_response(instruction, model_a_name, model_a_response, model_b_name, mode
         'model_a_response': model_a_response,
         'model_b_response': model_b_response,
     }
-    save_data(data)
+    save_data(data, out_folder=group_folder[group]['out_folder'])
     # gr.update(elem_id="model_a_from", visible=True)
     # gr.update(elem_id="model_b_from", visible=True)
     return model_a_name, model_b_name 
 
-def bothbad_response(instruction, model_a_name, model_a_response, model_b_name, model_b_response):
+def bothbad_response(group, instruction, model_a_name, model_a_response, model_b_name, model_b_response):
     data = {
         'uuid': str(uuid.uuid4()),
         # 'abbr': file.replace('.json', ''),
@@ -165,15 +194,12 @@ def bothbad_response(instruction, model_a_name, model_a_response, model_b_name, 
         'model_a_response': model_a_response,
         'model_b_response': model_b_response,
     }
-    save_data(data)
+    save_data(data, out_folder=group_folder[group]['out_folder'])
     # gr.update(elem_id="model_a_from", visible=True)
     # gr.update(elem_id="model_b_from", visible=True)
     return model_a_name, model_b_name 
 
 with gr.Blocks(title=title) as demo:
-
-    init_data = get_data()
-    init_visible_state = False
 
     gr.Markdown(notice_markdown)
 
@@ -185,6 +211,9 @@ with gr.Blocks(title=title) as demo:
             interactive=True
         )
         # update_task_btn = gr.Button("Update Group", scale=0.1)
+
+    init_data = get_data(group_folder[group_drop.value]["data_folder"])
+    init_visible_state = False
 
     with gr.Row():
         instruction_box = gr.Textbox(label="Instruction", value = init_data['instruction'], interactive=True)
@@ -234,24 +263,24 @@ with gr.Blocks(title=title) as demo:
     # ]
     leftvote_btn.click(
         fn = leftvote_response,
-        inputs = [instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
+        inputs = [group_drop, instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
         outputs = [model_A_name, model_B_name]
         # outputs= [model_A_name, model_B_name]
     )
     rightvote_btn.click(
         fn = rightvote_response,
-        inputs = [instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
+        inputs = [group_drop, instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
         outputs = [model_A_name, model_B_name]
         # outputs= [model_A_name, model_B_name]
     )
     tie_btn.click(
         fn = tie_response,
-        inputs = [instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
+        inputs = [group_drop, instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
         outputs = [model_A_name, model_B_name]
     )
     bothbad_btn.click(
         fn = bothbad_response,
-        inputs = [instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
+        inputs = [group_drop, instruction_box, hidden_A_name, model_A_response, hidden_B_name, model_B_response],
         outputs = [model_A_name, model_B_name]
     )
     new_round_btn.click(
@@ -270,4 +299,4 @@ with gr.Blocks(title=title) as demo:
     # visibility_state.bind_to(model_B_name, "visible")
 
 
-demo.launch()
+demo.launch(share=True)
